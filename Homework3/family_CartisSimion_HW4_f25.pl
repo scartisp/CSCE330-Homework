@@ -35,30 +35,93 @@ grand_father(X,Z) :- father(X,Y), parent(Y,Z).
 % New clauses for Exercise of Ch.4[L] follow for f25 HW4 solution.
 %Q1:
 mother(Y,X) :- child(X,Y), female(Y).
+/*
+?- mother(antonietta,alberto).
+true.
+*/
 grand_parent(X,Z) :- parent(X,Y), parent(Y,Z).
+/*
+?- grand_parent(alberto,dante).
+true ;
+false.
+*/
 great_grand_mother(X,Z) :- mother(X,Y), parent(Y,W), parent(W,Z).
+/*
+?- great_grand_mother(giulia,X).
+X = gioia.
+*/
 
 %Q2:
 sibling(X,Y) :- parent(Z,Y), parent(Z,X), \+ X=Y.
+/*
+?- sibling(sara,X).
+X = marco2 ;
+false.
+*/
 brother(X,Y) :- sibling(X,Y), male(X).
+/*
+?- brother(marco2,X).
+X = sara ;
+false.
+*/
 sister(X,Y) :- sibling(X,Y), female(X).
+/*
+?- sister(sara,X).
+X = marco2 ;
+false.
+*/
 
 %Q3:
 half_sibling(X,Y) :- parent(Z,X),parent(Z,Y), \+full_sibling(X,Y), \+ X=Y.
+/*
+?- half_sibling(X,Y).
+X = sara,
+Y = marco2 ;
+X = marco2,
+Y = sara ;
+false.
+*/
 full_sibling(X,Y) :- parent(Z,X), parent(Z,Y),parent(W, X), parent(W,Y), \+ W=Z, \+ X=Y.
+/*
+?- full_sibling(giulio,X).
+X = alberto ;
+X = alberto ;
+false.
+*/
 
 %Q4:
 first_cousin(X,Y) :- parent(Z,W), parent(Z,V), parent(W,X), parent(V,Y), sibling(W,V), \+ X=Y. 
+/*
+?- first_cousin(X,Y).
+X = marco,
+Y = donata .
+?- sibling(alberto, giulio).
+true ;
+true.
+*/
 second_cousin(X,Y) :- grand_parent(Z,W), grand_parent(Z,V), parent(W,X), parent(V,Y), first_cousin(W,V), \+ X=Y.
 
 %Q5:
 half_first_cousin(X,Y) :- parent(Z,X), parent(W,Y), half_sibling(Z,W), \+ X=Y.
 double_first_cousin(X,Y) :- mother(Z,X), father(W,X), mother(V,Y), father(U,Y),
-    (sibling(W,U); sibling(W,V); sibling(Z,V); sibling(Z,U)), \+ X=Y.  
+    ((sibling(Z,V), sibling(W,U)); (sibling(Z,U), sibling(W,V))), \+ X=Y.
 
 %Q6:
 first_cousin_twice_removed(X,Y) :- first_cousin(X,Z), grand_parent(Z,Y), \+ X=Y.
 
 %Q7
-descendant(X,Y) :- parent(Y,X), descendant(Z,Y).
+descendant(X,Y) :- parent(Y,X); (parent(Y,Z), descendant(X,Z)).
 ancestor(X,Y) :- descendant(Y,X).
+
+%Q8
+cousin(X,Y) :- \+ X=Y, parent(Z,X), parent(V,Y), (sibling(Z,V); cousin(Z,V)).
+
+%Q9
+closest_common_ancestor(X,Y,Z) :- ancestor(Z,X), ancestor(Z,Y), \+ (child(C,Z), ancestor(C,Y), ancestor(C,X)).
+
+%Q10
+write_child(X,Y) :- write(X), write(' is a child of '),write(Y),nl.
+
+write_descendant_chain(X,Y) :- descend_from(X,Y).
+descend_from(Descendant, Ancestor) :- child(Descendant, Ancestor), write_child(Descendant, Ancestor).
+descend_from(Descendant, Ancestor) :- child(C, Ancestor), descend_from(Descendant, C), write_child(C,Ancestor).
