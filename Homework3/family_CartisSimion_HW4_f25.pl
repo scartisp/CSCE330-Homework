@@ -13,7 +13,7 @@ child(eve,claire). child(annabelle,claire).
 child(eve,ed). child(annabelle,ed).
 child(giulio,guido). child(donata,giulio).
 child(sara,donata). child(marco2,donata).
-child(gioia,clara). % gioia and donata are first cousins once removed.
+child(gioia,clara). % gioia and donata are first cousins twice removed.
 child(giulio,antonietta). % remove to test full_sibling/2 and half_sibling/2
 
 male(guido). male(enrico).
@@ -100,28 +100,75 @@ true ;
 true.
 */
 second_cousin(X,Y) :- grand_parent(Z,W), grand_parent(Z,V), parent(W,X), parent(V,Y), first_cousin(W,V), \+ X=Y.
+/*
+?- second_cousin(X,Y).
+X = dante,
+Y = sara .
+
+?- first_cousin(marco,donata).
+true.
+*/
 
 %Q5:
 half_first_cousin(X,Y) :- parent(Z,X), parent(W,Y), half_sibling(Z,W), \+ X=Y.
+/*
+?- half_first_cousin(X,Y).
+false.
+*/
 double_first_cousin(X,Y) :- mother(Z,X), father(W,X), mother(V,Y), father(U,Y),
     ((sibling(Z,V), sibling(W,U)); (sibling(Z,U), sibling(W,V))), \+ X=Y.
+/*
+?- double_first_cousin(X,Y).
+false.
+*/
 
 %Q6:
 first_cousin_twice_removed(X,Y) :- first_cousin(X,Z), grand_parent(Z,Y), \+ X=Y.
-
+/*
+?- first_cousin_twice_removed(X,Y).
+X = donata,
+Y = gioia ;
+*/
 %Q7
 descendant(X,Y) :- parent(Y,X); (parent(Y,Z), descendant(X,Z)).
+/*
+?- descendant(gioia,giulia).
+true 
+*/
 ancestor(X,Y) :- descendant(Y,X).
+/*
+?- ancestor(giulia,gioia).
+true 
+*/
 
 %Q8
-cousin(X,Y) :- \+ X=Y, parent(Z,X), parent(V,Y), (sibling(Z,V); cousin(Z,V)).
+cousin(X,Y) :- parent(Z,X), parent(V,Y), (sibling(Z,V); cousin(Z,V)), \+ X=Y.
+/*
+?- 
+|    cousin(sara,X).
+X = dante .
+?- first_cousin(marco,donata).
+true.
+*/
 
 %Q9
 closest_common_ancestor(X,Y,Z) :- ancestor(Z,X), ancestor(Z,Y), \+ (child(C,Z), ancestor(C,Y), ancestor(C,X)).
+/*
+?- closest_common_ancestor(marco,sara,Z).
+Z = guido ;
+Z = antonietta ;
+false.
+*/
 
 %Q10
 write_child(X,Y) :- write(X), write(' is a child of '),write(Y),nl.
-
+/*
+?- write_descendant_chain(gioia,giulia).
+gioia is a child of clara
+clara is a child of marco
+marco is a child of giulia
+true .
+*/
 write_descendant_chain(X,Y) :- descend_from(X,Y).
 descend_from(Descendant, Ancestor) :- child(Descendant, Ancestor), write_child(Descendant, Ancestor).
 descend_from(Descendant, Ancestor) :- child(C, Ancestor), descend_from(Descendant, C), write_child(C,Ancestor).
