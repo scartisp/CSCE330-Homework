@@ -17,11 +17,26 @@ central_europe(France, Switzerland, Italy, Belgium, Holland, Germany, Austria):-
     \+ Belgium = Germany, \+ Belgium = Holland,
     \+ Holland = Germany, 
     \+ Germany = Austria.
+
+    print_central_europe :-
+        central_europe(France, Switzerland, Italy, Belgium, Holland, Germany, Austria), nl,
+        write("France: "), write(France), nl,
+        write("Switzerland: "), write(Switzerland), nl,
+        write("Italy: "), write(Italy), nl,
+        write("Belgium: "), write(Belgium), nl,
+        write("Holland: "), write(Holland), nl,
+        write("Germany: "), write(Germany), nl,
+        write("Austria: "), write(Austria), nl.
 /*
 ANSWER
-France = Holland, Holland = Austria, Austria = red,
-Switzerland = Belgium, Belgium = yellow,
-Italy = Germany, Germany = orange 
+France: red
+Switzerland: yellow
+Italy: orange
+Belgium: yellow
+Holland: red
+Germany: orange
+Austria: red
+true 
 */
 
 /*
@@ -81,7 +96,7 @@ E = 4 .
 Q4: Logic problem
 */
 
-print_solution :- 
+print_logic_solution :- 
     solution(Pizza, Steak, Lasagna, Chicken, Coke, Milk, Coffee, Water), nl,
     write('pizza: '), write(Pizza), nl,
     write('steak: '), write(Steak), nl,
